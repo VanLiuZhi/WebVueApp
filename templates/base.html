@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<!--* view_name: {{ view }} *-->
+<!--* view_path: {{ view_path }} *-->
+{% load static %}
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="icon" href={% static "img/icon.png" %} type="image/x-icon"/>
+    <link rel="stylesheet" href={% static "layui/css/layui.css" %}>
+    <script src={% static "layui/layui.js" %}></script>
+    <script src={% static "js/jquery-3.2.1.min.js" %}></script>
+    {% if IS_DEBUG %}
+        <script src={% static "js/vue/vue.js" %}></script>
+    {% else %}
+        <script src={% static "js/vue/vue.min.js" %}></script>
+    {% endif %}
+    {% block title %}
+    <title>Title</title>
+    {% endblock %}
+</head>
+{% block body %}{% endblock %}
+</html>
