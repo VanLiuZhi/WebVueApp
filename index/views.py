@@ -25,5 +25,5 @@ class IndexView(BaseView):
 
 
 urlpatterns = [
-    path('a/', csrf_exempt(IndexView.as_view()))
+    path('', csrf_exempt(IndexView.as_view()))
 ]
