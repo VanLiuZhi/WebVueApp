@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'base.apps.BaseConfig',
     'index.apps.IndexConfig',
-    'stats.apps.StatsConfig'
+    'stats.apps.StatsConfig',
+    'vadmin.apps.VadminConfig',
 ]
 
 MIDDLEWARE = [

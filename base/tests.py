@@ -1,3 +1,8 @@
-from django.test import TestCase
+import snowflake.client
 
-# Create your tests here.
+# host = '0.0.0.0'
+# port = 30001
+# snowflake.client.setup(host, port)
+res = snowflake.client.get_guid()
+
+print(res)

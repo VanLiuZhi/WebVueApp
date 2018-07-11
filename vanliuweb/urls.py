@@ -22,4 +22,5 @@ urlpatterns = [
     path('', (include('index.views'))),
     path('stats/', (include('stats.views'))),
     path('api/stats/', (include('stats.views'))),
+    path('vadmin/', (include('vadmin.views'))),
 ]

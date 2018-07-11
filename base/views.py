@@ -9,9 +9,52 @@ from django.http import (
 )
 from django.conf import settings
 # from mongodbmanage.base import mongo_connection
+import json
+from django.shortcuts import render, HttpResponse
+from base.util import json_filed_default
 
 
-class BaseView(View):
+class ResponseMinx:
+    """
+    响应处理类 #TODO 验证每次连接是不是都会创建新的对象，让响应方法得到新的参数（或者考虑单实例）
+    """
+    code = '0'
+    data = ''
+    msg = ''
+    SUCCESS_CODE = '0'
+    ERROR_CODE = '-1'
+
+    test_param = '123'
+
+    @property
+    def return_result_data(self):
+        result_data = {
+            'code': self.code,
+            'data': self.data,
+            'msg': self.msg
+        }
+        print(self.test_param)
+        self.test_param = '321'
+        return result_data
+
+    def success_response(self, data=None, msg=None, code=None):
+        self.code = code or self.SUCCESS_CODE
+        if data:
+            self.data = data
+        if msg:
+            self.msg = msg
+        return self.return_result_data
+
+    def error_response(self, data=None, msg=None, code=None):
+        self.code = code or self.ERROR_CODE
+        if data:
+            self.data = data
+        if msg:
+            self.msg = msg
+        return self.return_result_data
+
+
+class BaseView(View, ResponseMinx):
     template_name = None
 
     def render(self, template_name, context=None, request=None, content_type=None, status=None, using=None):
@@ -27,4 +70,5 @@ class BaseView(View):
         content = loader.render_to_string(template_name, context, request=request, using=using)
         return HttpResponse(content, content_type, status)
 
-
+    def xml_response_for_json(self, data):
+        return HttpResponse(json.dumps(data, default=json_filed_default))
