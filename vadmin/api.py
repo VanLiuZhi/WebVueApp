@@ -56,9 +56,9 @@ class ApiHandleView(BaseView):
         if action:
             method_dict = {
                 'list': self.api_list_method,
-                'add': self.api_add_method,
+                'create': self.api_create_method,
                 'edit': self.api_edit_method,
-                'delete': self.api_edit_method
+                'delete': self.api_delete_method,
             }
             return method_dict.get(action)
         else:
@@ -66,21 +66,29 @@ class ApiHandleView(BaseView):
 
     def api_list_method(self, request, models_name):
         """
-        获取模型列表数据
+        获取模型列表数据(分页)
         :return:
         """
         data = request_body_to_dict(request)
         model = return_models(models_name)
         print(data)
-        model_query_instance = model.objects.filter()
+        # 分页准备
+        page = data.get('page')
+        limit = data.get('limit')
+        start = (int(page) - 1) * int(limit)
+        end = int(page) * int(limit)
+        # end分页准备
+        model_query = model.objects.filter()
+        total = model_query.count()
         fields = model().return_fields
         fields = fields + ['id', 'created', 'updated']
         hander = lambda item: object_to_dict(fields, item)
+        model_query_instance = model_query[start:end]
         res = [hander(item) for item in model_query_instance]
-        data = {'item': res}
+        data = {'item': res, 'total': total}
         return self.xml_response_for_json(self.success_response(data=data, msg='获取成功'))
 
-    def api_add_method(self, request, models_name):
+    def api_create_method(self, request, models_name):
         """
         添加数据到模型
         :param request:
@@ -95,11 +103,34 @@ class ApiHandleView(BaseView):
         model_instance.save()
         return self.xml_response_for_json(self.success_response(msg='添加成功'))
 
-    def api_edit_method(self):
-        pass
+    def api_edit_method(self, request, models_name):
+        """
+        编辑模型数据
+        :param request:
+        :param models_name:
+        :return:
+        """
+        data = request_body_to_dict(request)
+        update_object = data.get('object')
+        update = data.get('update')
+        model = return_models(models_name)
+        model_instance = model.objects.filter(**update_object).first()
+        model_instance = dict_to_object(update, model_instance)
+        model_instance.save()
+        return self.xml_response_for_json(self.success_response(msg='修改成功'))
 
-    def api_delete_method(self):
-        pass
+    def api_delete_method(self, request, models_name):
+        """
+        删除模型的数据
+        :param request: 参数结构举例 {'data': {'guid': 123}}
+        :param models_name:
+        :return:
+        """
+        data = request_body_to_dict(request)
+        model = return_models(models_name)
+        model_instance = model.objects.filter(**data.get('data')).first()
+        model_instance.delete()
+        return self.xml_response_for_json(self.success_response(msg='删除成功'))
 
 
 class MenuView(BaseView):
