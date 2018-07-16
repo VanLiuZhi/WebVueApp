@@ -68,7 +68,7 @@ def json_filed_default(obj):
     if isinstance(obj, decimal.Decimal):
         return float(obj)
     if isinstance(obj, datetime.datetime):
-        return obj.timetuple()
+        return obj.strftime('%Y-%m-%d %X')
     if isinstance(obj, datetime.date):
         return obj.timetuple()
     if isinstance(obj, datetime.time):

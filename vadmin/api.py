@@ -77,7 +77,8 @@ class ApiHandleView(BaseView):
         fields = fields + ['id', 'created', 'updated']
         hander = lambda item: object_to_dict(fields, item)
         res = [hander(item) for item in model_query_instance]
-        return self.xml_response_for_json(self.success_response(data=res, msg='获取成功'))
+        data = {'item': res}
+        return self.xml_response_for_json(self.success_response(data=data, msg='获取成功'))
 
     def api_add_method(self, request, models_name):
         """
