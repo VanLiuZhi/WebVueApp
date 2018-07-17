@@ -49,6 +49,8 @@ class ApiHandleView(BaseView):
         action = re_match and re_match[0] or None
         models_name = api_name[len(action):]
         api_object = self.get_api_method(api_name, action)
+        if not api_object:
+            return self.xml_response_for_json(self.error_response(msg='Method Not Found'))
         res = api_object(request, models_name)
         return res
 
@@ -62,7 +64,7 @@ class ApiHandleView(BaseView):
             }
             return method_dict.get(action)
         else:
-            return getattr(self, api_name)
+            return getattr(self, api_name, None)
 
     def api_list_method(self, request, models_name):
         """
