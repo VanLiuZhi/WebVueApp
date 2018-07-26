@@ -45,6 +45,7 @@ class Article(BaseModel):
     auther = models.CharField(_('作者'), max_length=16)
     content = models.TextField(_('内容'))
     times = models.SmallIntegerField(_('浏览次数'))
+    guid = models.CharField(_('GUID'), max_length=32)
     articlemenu = models.CharField(_('所属菜单的GUID'), max_length=32)
 
     def __unicode__(self):

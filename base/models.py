@@ -33,3 +33,15 @@ class BaseModel(models.Model):
         :return:
         """
         return [item.attname for item in self._meta.concrete_fields if item not in self.base_fields]
+
+    @property
+    def return_dict(self):
+        """
+        返回模型实例的字典
+        :return:
+        """
+        _dict = {}
+        _field = self.return_fields
+        for item in _field:
+            _dict[item] = getattr(self, item, '')
+        return _dict

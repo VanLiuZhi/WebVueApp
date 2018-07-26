@@ -9,10 +9,7 @@ from stats.models import MoneyStats
 
 
 def creat_test_data():
-    for i in range(1, 10):
-        # now = datetime.datetime.now()
-        ms = MoneyStats(title=i, money=round(random.random(), 2))
-        ms.save()
+    pass
 
 
 if __name__ == '__main__':
