@@ -11,6 +11,7 @@ from django.urls import path
 from base.util import request_body_to_dict, dict_to_object, object_to_dict, get_uuid
 from django.views.decorators.csrf import csrf_exempt
 from vadmin.models import ArticleMenu, Article
+from stats.models import MoneyStats
 import re
 
 
@@ -22,7 +23,8 @@ def return_models(models_name):
     """
     _dict = {
         'ArticleMenu': ArticleMenu,
-        'Article': Article
+        'Article': Article,
+        'MoneyStats': MoneyStats
     }
     return _dict.get(models_name)
 
@@ -33,6 +35,7 @@ class ApiHandleView(BaseView):
     api说明：list, add, edit, delete + 模型名字
     # ToDo 方法allowed处理
     """
+    base_method_str = ['list', 'create', 'edit', 'delete']
 
     def dispatch(self, request, *args, **kwargs):
         if request.method.lower() not in ['post', 'get']:
@@ -55,7 +58,7 @@ class ApiHandleView(BaseView):
         return res
 
     def get_api_method(self, api_name, action):
-        if action:
+        if action and action in self.base_method_str:
             method_dict = {
                 'list': self.api_list_method,
                 'create': self.api_create_method,

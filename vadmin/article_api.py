@@ -18,7 +18,7 @@ class ArticleView(ApiHandleView):
     """
     文章接口类
     """
-    def getArticleForGUID(self, request):
+    def getArticleForGUID(self, request, models_name):
         """
         通过GUID获取文章详情
         :return:
@@ -29,6 +29,7 @@ class ArticleView(ApiHandleView):
         data = article.return_dict
         return self.xml_response_for_json(self.success_response(data=data, msg='获取成功'))
 
+
 urlpatterns = [
-    path('details', csrf_exempt(ArticleView.as_view())),
+    path('<api_name>', csrf_exempt(ArticleView.as_view())),
 ]
