@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from vadmin.models import ArticleMenu, Article
 from vadmin.api import ApiHandleView
 import re
+from vadmin.rich_text_utils import ContentHandler
 
 class ArticleView(ApiHandleView):
     """
@@ -27,6 +28,8 @@ class ArticleView(ApiHandleView):
         guid = data.get('GUID')
         article = Article.objects.get(guid=guid)
         data = article.return_dict
+        content_handler = ContentHandler(data['content'])
+        data['menu'], data['content']= content_handler.generate_menu_str()
         return self.xml_response_for_json(self.success_response(data=data, msg='获取成功'))
 
 
