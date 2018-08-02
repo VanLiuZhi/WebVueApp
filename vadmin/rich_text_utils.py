@@ -4,25 +4,25 @@
 # @Author  : liuzhi
 # @File    : rich_text_utils.py
 
-# 处理富文本的原始数据，安装定义的规则来生成目录，并对原数据添加抛锚id
+# 处理富文本的原始数据，安照定义的规则来生成目录，并对原数据添加抛锚id
 
 from jinja2 import Template
 import re
 
 # 目录生成模板
-base_template = """<ul>
+base_template = """<div class=''><ul>
             {% for item in data %}
-            <li><a href="#{{ item.name }}">{{ item.name }}</a>
+            <li><a style='text-decoration: none;' href="#{{ item.name }}">{{ item.name }}</a>
                 {% if item.children %}
-                <ul>
+                <ul style='padding: 5px'>
                     {% for i in item.children %}
-                    <li><a href="#{{ i.name }}">{{ i.name }}</a></li>
+                    <li><a style='text-decoration: none;' href="#{{ i.name }}">{{ i.name }}</a></li>
                     {% endfor %}
                 </ul>
                 {% endif %}
             </li>
             {% endfor %}
-        </ul>"""
+        </ul></div>"""
 
 
 class ContentHandler:
