@@ -16,7 +16,7 @@ base_template = """<div class=''><ul>
                 {% if item.children %}
                 <ul style='padding: 5px'>
                     {% for i in item.children %}
-                    <li><a style='text-decoration: none;' href="#{{ i.name }}">{{ i.name }}</a></li>
+                    <li><a style='text-decoration: none;cursor: pointer' onclick="document.getElementById('{{i.name}}').scrollIntoView();return false;">{{ i.name }}</a></li>
                     {% endfor %}
                 </ul>
                 {% endif %}
