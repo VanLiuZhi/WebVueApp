@@ -10,19 +10,28 @@ from jinja2 import Template
 import re
 
 # 目录生成模板
-base_template = """<div class=''><ul>
+base_template = """
+        <ul>
             {% for item in data %}
-            <li><a style='text-decoration: none;' href="#{{ item.name }}">{{ item.name }}</a>
+            <li>
+            <a style='text-decoration: none; cursor: pointer' 
+            onclick="document.getElementById('{{item.name}}').scrollIntoView();return false;">{{ item.name }}
+            </a>
                 {% if item.children %}
                 <ul style='padding: 5px'>
                     {% for i in item.children %}
-                    <li><a style='text-decoration: none;cursor: pointer' onclick="document.getElementById('{{i.name}}').scrollIntoView();return false;">{{ i.name }}</a></li>
+                    <li>
+                    <a style='text-decoration: none;cursor: pointer' 
+                    onclick="document.getElementById('{{i.name}}').scrollIntoView();return false;">{{ i.name }}
+                    </a>
+                    </li>
                     {% endfor %}
                 </ul>
                 {% endif %}
             </li>
             {% endfor %}
-        </ul></div>"""
+        </ul>
+        """
 
 
 class ContentHandler:
