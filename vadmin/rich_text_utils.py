@@ -41,6 +41,8 @@ class ContentHandler:
     Chinese_re = "[\u4E00-\u9FA5]+"
     h2 = '<h2.+</h2>'
     h3 = '<h2.+</h2>|<h3.+</h3>'
+    pre_class = '<pre class=".+">'
+    new_pre = '<pre>'
 
     def __init__(self, html_str):
         self.html_str = html_str
@@ -92,11 +94,13 @@ class ContentHandler:
         _data = []
         for i in self.re_h2:
             name = self.get_chinese(i)
+            # 对标题增加id
             self.replace_str_for_raw_html_str(i, self.get_tag_str(i, name))
             self.re_h3.pop(0)
             for j in self.re_h3:
                 if 'h2' not in j and 'h3' in j:
                     _name = self.get_chinese(j)
+                    # 对标题增加id
                     self.replace_str_for_raw_html_str(j, self.get_tag_str(j, _name))
                     _data.append({'name': _name})
                     self.re_h3.pop(0)
@@ -106,6 +110,10 @@ class ContentHandler:
             _data = []
         template = Template(base_template)
         res = template.render({'data': data})
+        # 删除pre的class
+        pre_class_list = re.findall(self.pre_class, self.raw_html_str)
+        for item in pre_class_list:
+            self.replace_str_for_raw_html_str(item, self.new_pre)
         return res, self.raw_html_str
 
 
@@ -136,5 +144,11 @@ if __name__ == '__main__':
             </div>
             <p style="text-align: left;">&nbsp;</p>
             <p style="text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>"""
-    c = ContentHandler(html_str=_str)
-    print(c.generate_menu_str())
+
+    _re_str = '<pre class=".+">'
+
+    res = re.findall(_re_str, _str)
+    print(res)
+
+    # c = ContentHandler(html_str=_str)
+    # print(c.generate_menu_str())
