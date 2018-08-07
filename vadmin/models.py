@@ -4,19 +4,20 @@
 from django.db import models
 from base.models import BaseModel
 from base.fields import verbose_name as _
+from django.utils.functional import cached_property
 
 MENU_TYPE = []
 
 
-class ArticleMenu(BaseModel):
+class ArticleClassify(BaseModel):
     """
     菜单模型
     """
     name = models.CharField(_('菜单名称'), max_length=32)
     parent = models.CharField(_('所属菜单'), max_length=32)  # 存储菜单上级的GUID
     guid = models.CharField(_('GUID'), max_length=32)
-    type = models.SmallIntegerField(_('类型'), default=1)
-    level = models.SmallIntegerField(_('级别'), default=1)
+    # type = models.SmallIntegerField(_('类型'), default=1)
+    level = models.SmallIntegerField(_('级别'), default=1)  # 最大到三级
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -33,8 +34,33 @@ class ArticleMenu(BaseModel):
         返回属于这个菜单的子项（只返回子项，不返回子项的子项）
         :return:
         """
-        query = ArticleMenu.objects.filter(parent=self.guid)
+        query = ArticleClassify.objects.filter(parent=self.guid)
         return [{'name': item.name, 'guid': item.guid} for item in query]
+
+    @staticmethod
+    def get_children(guid):
+        """
+        获取parent为guid的子项
+        :param guid:
+        :return: guid list
+        """
+        return ArticleClassify.objects.filter(parent=guid).values_list('guid', flat=True)
+
+    # @cached_property
+    # def return_all_children(self):
+    #     """
+    #     返回所有的子项
+    #     :return:
+    #     """
+    #     loop = 3
+    #     query = ArticleClassify.objects.filter(parent=self.guid).values_list('guid', flat=True)
+    #
+    #
+    #     def loop(query):
+    #         for item in query:
+    #             return loop
+    #
+    #         return loop(query)
 
 
 class Article(BaseModel):

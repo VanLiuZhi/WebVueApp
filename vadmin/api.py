@@ -10,7 +10,7 @@ from django.views.generic.base import View
 from django.urls import path
 from base.util import request_body_to_dict, dict_to_object, object_to_dict, get_uuid
 from django.views.decorators.csrf import csrf_exempt
-from vadmin.models import ArticleMenu, Article
+from vadmin.models import ArticleClassify, Article
 from stats.models import MoneyStats
 import re
 
@@ -22,7 +22,7 @@ def return_models(models_name):
     :return:
     """
     _dict = {
-        'ArticleMenu': ArticleMenu,
+        'ArticleClassify': ArticleClassify,
         'Article': Article,
         'MoneyStats': MoneyStats
     }
