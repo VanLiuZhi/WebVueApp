@@ -50,6 +50,15 @@ class ArticleView(ApiHandleView):
         data = {'items': res}
         return self.xml_response_for_json(self.success_response(data=data, msg='获取成功'))
 
+    def saveArticle(self, request, models_name):
+        """
+        保存文章
+        :param request:
+        :param models_name:
+        :return:
+        """
+        data = request_body_to_dict(request)
+
 
 urlpatterns = [
     path('<api_name>', csrf_exempt(ArticleView.as_view())),

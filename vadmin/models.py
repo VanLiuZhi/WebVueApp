@@ -68,7 +68,7 @@ class Article(BaseModel):
     文章模型
     """
     title = models.CharField(_('标题'), max_length=16)
-    auther = models.CharField(_('作者'), max_length=16)
+    author = models.CharField(_('作者'), max_length=16)
     abstract = models.TextField(_('摘要'))
     cover = models.CharField(_('封面img对应url'), max_length=256)
     content = models.TextField(_('内容'))
