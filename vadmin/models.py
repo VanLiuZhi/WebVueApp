@@ -11,13 +11,13 @@ MENU_TYPE = []
 
 class ArticleClassify(BaseModel):
     """
-    菜单模型
+    文章分类模型
     """
-    name = models.CharField(_('菜单名称'), max_length=32)
-    parent = models.CharField(_('所属菜单'), max_length=32)  # 存储菜单上级的GUID
+    name = models.CharField(_('分类名称'), max_length=32)
+    parent = models.CharField(_('所属分类'), max_length=32)  # 存储分类上级的GUID
     guid = models.CharField(_('GUID'), max_length=32)
     # type = models.SmallIntegerField(_('类型'), default=1)
-    level = models.SmallIntegerField(_('级别'), default=1)  # 最大到三级
+    level = models.SmallIntegerField(_('级别'), default=1)  # 最大到三级（没有做限制）
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -26,15 +26,15 @@ class ArticleClassify(BaseModel):
         return u'%s-%s' % (self.name, self.id)
 
     class Meta:
-        verbose_name = _('菜单类别')
-        verbose_name_plural = _('菜单类别')
+        verbose_name = _('文章分类')
+        verbose_name_plural = _('文章分类')
         ordering = ['ordering', 'id']
         app_label = 'vadmin'
 
     @property
     def return_children(self):
         """
-        返回属于这个菜单的子项（只返回子项，不返回子项的子项）
+        返回属于这个分类的子项（只返回子项，不返回子项的子项）
         :return:
         """
         query = ArticleClassify.objects.filter(parent=self.guid)
@@ -90,6 +90,11 @@ class Article(BaseModel):
 
     def __unicode__(self):
         return u'%s-%s' % (self.title, self.author)
+
+    @property
+    def article_menu_name(self):
+        ac = ArticleClassify.objects.get(guid=self.articlemenu)
+        return ac and ac.name or ''
 
     class Meta:
         verbose_name = _('文章')

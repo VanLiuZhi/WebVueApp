@@ -32,7 +32,7 @@ class BaseModel(models.Model):
         返回模型字典名称的list（不会返回id和基本字段，需要则手动添加）
         :return:
         """
-        return [item.attname for item in self._meta.concrete_fields if item not in self.base_fields]
+        return [item.attname for item in self._meta.concrete_fields if item.attname not in self.base_fields]
 
     @property
     def return_dict(self):

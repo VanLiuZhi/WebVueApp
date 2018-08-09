@@ -30,6 +30,7 @@ class ArticleView(ApiHandleView):
         guid = params.get('GUID')
         article = Article.objects.get(guid=guid)
         data = article.return_dict
+        data['article_menu_label'] = article.article_menu_name
         if not params.get('from_to_admin'):
             content_handler = ContentHandler(data['content'])
             data['menu'], data['content'] = content_handler.generate_menu_str()
