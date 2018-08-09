@@ -86,7 +86,7 @@ class ApiHandleView(BaseView):
         model_query = model.objects.filter()
         total = model_query.count()
         fields = model().return_fields
-        fields = fields + ['id', 'created', 'updated']
+        fields = fields + ['id', 'created', 'updated', 'date']
         hander = lambda item: object_to_dict(fields, item)
         model_query_instance = model_query[start:end]
         res = [hander(item) for item in model_query_instance]

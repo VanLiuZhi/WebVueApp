@@ -11,7 +11,7 @@ import datetime
 class BaseModel(models.Model):
     ordering = models.IntegerField(_('排序权值'), default=0, db_index=True, editable=False)
     created = models.DateTimeField(_('创建时间'), auto_now_add=True)
-    date = models.DateField(_('创建日期'), default=datetime.datetime.now())
+    date = models.DateField(_('创建日期'), default=timezone.now)  # titimezone 是系统设置时区
     updated = models.DateTimeField(_('修改时间'), auto_now=True)
 
     class Meta:

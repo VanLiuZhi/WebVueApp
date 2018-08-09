@@ -23,7 +23,7 @@ class ArticleClassify(BaseModel):
         return u'%s' % self.name
 
     def __repr__(self):
-        return u'%s-%s' % (self.name, self.id)
+        return u'%s' % self.name
 
     class Meta:
         verbose_name = _('文章分类')

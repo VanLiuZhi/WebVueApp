@@ -70,7 +70,7 @@ def json_filed_default(obj):
     if isinstance(obj, datetime.datetime):
         return obj.strftime('%Y-%m-%d %X')
     if isinstance(obj, datetime.date):
-        return obj.timetuple()
+        return obj.strftime('%Y-%m-%d')
     if isinstance(obj, datetime.time):
         return obj.strftime('%H:%M:%S')
     if isinstance(obj, time.struct_time):
