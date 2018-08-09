@@ -103,7 +103,7 @@ class ContentHandler:
                     # 对标题增加id
                     self.replace_str_for_raw_html_str(j, self.get_tag_str(j, _name))
                     _data.append({'name': _name})
-                    self.re_h3.pop(0)
+                    # self.re_h3.pop(0) todo 不能在此出栈，因为对list的取值，index确定，但是出栈改变了数据内容，却没有改变要操作的索引（就是for不是去取下一个值，而是通过索引来操作）
                 else:
                     break
             data.append({'name': name, 'children': _data})
@@ -147,8 +147,8 @@ if __name__ == '__main__':
 
     _re_str = '<pre class=".+">'
 
-    res = re.findall(_re_str, _str)
-    print(res)
+    # res = re.findall(_re_str, _str)
+    # print(res)
 
-    # c = ContentHandler(html_str=_str)
-    # print(c.generate_menu_str())
+    c = ContentHandler(html_str=_str)
+    print(c.generate_menu_str())

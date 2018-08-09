@@ -22,6 +22,9 @@ class ArticleClassify(BaseModel):
     def __unicode__(self):
         return u'%s' % self.name
 
+    def __repr__(self):
+        return u'%s-%s' % (self.name, self.id)
+
     class Meta:
         verbose_name = _('菜单类别')
         verbose_name_plural = _('菜单类别')
@@ -35,7 +38,7 @@ class ArticleClassify(BaseModel):
         :return:
         """
         query = ArticleClassify.objects.filter(parent=self.guid)
-        return [{'name': item.name, 'guid': item.guid} for item in query]
+        return query
 
     @staticmethod
     def get_children(guid):
@@ -46,21 +49,30 @@ class ArticleClassify(BaseModel):
         """
         return ArticleClassify.objects.filter(parent=guid).values_list('guid', flat=True)
 
-    # @cached_property
-    # def return_all_children(self):
-    #     """
-    #     返回所有的子项
-    #     :return:
-    #     """
-    #     loop = 3
-    #     query = ArticleClassify.objects.filter(parent=self.guid).values_list('guid', flat=True)
-    #
-    #
-    #     def loop(query):
-    #         for item in query:
-    #             return loop
-    #
-    #         return loop(query)
+    @property
+    def return_all_children(self):
+        """
+        返回所有的子项（利用N叉树遍历方法
+        ）
+        :return:
+        """
+        root = self
+        if not root:
+            return []
+        que = []  # 保存节点的队列
+        res = []  # 保存结果的列表
+        que.append(root)  #
+        while len(que):  # 判断队列不为空
+            length = len(que)
+            # sub = []  # 保存每层的节点的值
+            for i in range(length):
+                current = que.pop(0)  # 出队列的当前节点
+                # sub.append(current)
+                res.append(current)  # 直接把节点加到结果里面
+                for child in current.return_children:  # 所有子结点入队列
+                    que.append(child)
+            # res.append(sub)  # 把每层的节点的值加入结果列表
+        return res
 
 
 class Article(BaseModel):
@@ -77,7 +89,7 @@ class Article(BaseModel):
     articlemenu = models.CharField(_('所属菜单的GUID'), max_length=32)
 
     def __unicode__(self):
-        return u'%s-%s' % (self.title, self.auther)
+        return u'%s-%s' % (self.title, self.author)
 
     class Meta:
         verbose_name = _('文章')

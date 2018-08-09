@@ -116,8 +116,8 @@ class ApiHandleView(BaseView):
         :return:
         """
         data = request_body_to_dict(request)
-        update_object = data.get('object')
-        update = data.get('update')
+        update_object = data.get('object')  # 更新对象的标识，用来查询需要更新的记录
+        update = data.get('update')  # 更新数据
         model = return_models(models_name)
         model_instance = model.objects.filter(**update_object).first()
         model_instance = dict_to_object(update, model_instance)
