@@ -86,15 +86,26 @@ class Article(BaseModel):
     content = models.TextField(_('内容'))
     times = models.SmallIntegerField(_('浏览次数'))
     guid = models.CharField(_('GUID'), max_length=32)
-    articlemenu = models.CharField(_('所属菜单的GUID'), max_length=32)
+    articlemenu = models.CharField(_('所属分类 的GUID'), max_length=32)
 
     def __unicode__(self):
         return u'%s-%s' % (self.title, self.author)
 
     @property
-    def article_menu_name(self):
+    def article_classify_name(self):
         ac = ArticleClassify.objects.get(guid=self.articlemenu)
         return ac and ac.name or ''
+
+    def update_times(self):
+        """
+        更新浏览次数
+        :return:
+        """
+        self.times = self.times + 1
+        self.save()
+
+    # 由通用方法处理的模型，通过定义add_fields实现字段扩展
+    add_fields = ['article_classify_name']
 
     class Meta:
         verbose_name = _('文章')

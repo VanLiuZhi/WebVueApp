@@ -74,16 +74,20 @@ class ApiHandleView(BaseView):
         获取模型列表数据(分页)
         :return:
         """
-        data = request_body_to_dict(request)
+        params = request_body_to_dict(request)
         model = return_models(models_name)
-        print(data)
+        print(params)
         # 分页准备
-        page = data.get('page')
-        limit = data.get('limit')
+        page = params.get('page')
+        limit = params.get('limit')
         start = (int(page) - 1) * int(limit)
         end = int(page) * int(limit)
         # end分页准备
         model_query = model.objects.filter()
+        # 排序处理
+        if params and 'orderby' in params:
+            model_query = model_query.order_by(*[v.strip() for v in params['orderby'].split(',') if v.strip()])
+        # end排序处理
         total = model_query.count()
         fields = model().return_fields
         fields = fields + ['id', 'created', 'updated', 'date']
