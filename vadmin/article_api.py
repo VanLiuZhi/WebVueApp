@@ -50,17 +50,38 @@ class ArticleView(ApiHandleView):
         hander = lambda item: object_to_dict(fields, item)
         query = ArticleClassify.objects.filter(name__contains=name)
         res = [hander(item) for item in query]
+        data = {'items': res, 'count': query.count()}
+        return self.xml_response_for_json(self.success_response(data=data, msg='获取成功'))
+
+    def getTopLevelArticleClassify(self, request, *args):
+        """
+        获取文章分类的顶级分类（level为1的）
+        :param request:
+        :param args:
+        :return:
+        """
+        query = ArticleClassify.objects.filter(level=1)
+        fields = ['name', 'guid']
+        hander = lambda item: object_to_dict(fields, item)
+        res = [hander(item) for item in query]
         data = {'items': res}
         return self.xml_response_for_json(self.success_response(data=data, msg='获取成功'))
 
-    def saveArticle(self, request, models_name):
+    def getArticleClassifyForGUID(self, request, *args):
         """
-        保存文章
+        通过GUID获取当前分类下的子分类（不返回子分类的子分类）
         :param request:
-        :param models_name:
+        :param args:
         :return:
         """
-        data = request_body_to_dict(request)
+        params = request_body_to_dict(request)
+        parent = params.get('parent')
+        query = ArticleClassify.objects.filter(parent=parent)
+        fields = ['name', 'guid']
+        hander = lambda item: object_to_dict(fields, item)
+        res = [hander(item) for item in query]
+        data = {'items': res}
+        return self.xml_response_for_json(self.success_response(data=data, msg='获取成功'))
 
 
 urlpatterns = [
