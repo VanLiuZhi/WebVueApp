@@ -50,6 +50,17 @@ class ArticleClassify(BaseModel):
         return ArticleClassify.objects.filter(parent=guid).values_list('guid', flat=True)
 
     @property
+    def return_all_children_count(self):
+        """
+        返回该分类下有多少文章
+        :return:
+        """
+        query_list = self.return_all_children
+        id_list = [item.id for item in query_list if item and item.id or None]
+        count = Article.objects.filter(articleclassify__in=id_list).count()
+        return count or 0
+
+    @property
     def return_all_children(self):
         """
         返回所有的子项（利用N叉树遍历方法
@@ -64,14 +75,29 @@ class ArticleClassify(BaseModel):
         que.append(root)  #
         while len(que):  # 判断队列不为空
             length = len(que)
-            # sub = []  # 保存每层的节点的值
             for i in range(length):
                 current = que.pop(0)  # 出队列的当前节点
-                # sub.append(current)
                 res.append(current)  # 直接把节点加到结果里面
                 for child in current.return_children:  # 所有子结点入队列
                     que.append(child)
-            # res.append(sub)  # 把每层的节点的值加入结果列表
+        return res
+
+    @property
+    def return_parents(self):
+        """
+        返回当前分类的父级信息
+        :return:
+        """
+        parent = ArticleClassify.objects.filter(guid=self.parent).first()
+        loop = 5
+        res = []
+        if parent:
+            res.append({'name': parent.name})
+        while parent and loop:
+            parent = ArticleClassify.objects.filter(guid=parent.parent).first()
+            if parent:
+                res.append({'name': parent.name})
+                loop -= 1
         return res
 
 
@@ -86,14 +112,14 @@ class Article(BaseModel):
     content = models.TextField(_('内容'))
     times = models.SmallIntegerField(_('浏览次数'))
     guid = models.CharField(_('GUID'), max_length=32)
-    articlemenu = models.CharField(_('所属分类 的GUID'), max_length=32)
+    articleclassify = models.CharField(_('所属分类 的GUID'), max_length=32)
 
     def __unicode__(self):
         return u'%s-%s' % (self.title, self.author)
 
     @property
     def article_classify_name(self):
-        ac = ArticleClassify.objects.get(guid=self.articlemenu)
+        ac = ArticleClassify.objects.get(guid=self.articleclassify)
         return ac and ac.name or ''
 
     def update_times(self):

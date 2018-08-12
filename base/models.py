@@ -33,7 +33,7 @@ class BaseModel(models.Model):
         :return:
         """
         fields = [item.attname for item in self._meta.concrete_fields if item.attname not in self.base_fields]
-        if getattr(self, 'add_fields'):
+        if getattr(self, 'add_fields', None):
             add_fields = self.add_fields
             fields += add_fields
         return fields

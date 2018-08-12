@@ -77,7 +77,7 @@ class ArticleView(ApiHandleView):
         params = request_body_to_dict(request)
         parent = params.get('parent')
         query = ArticleClassify.objects.filter(parent=parent)
-        fields = ['name', 'guid']
+        fields = ['name', 'guid', 'return_parents']
         hander = lambda item: object_to_dict(fields, item)
         res = [hander(item) for item in query]
         data = {'items': res}
