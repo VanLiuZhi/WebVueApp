@@ -91,8 +91,10 @@ class ApiHandleView(BaseView):
         if params and 'orderby' in params:
             model_query = model_query.order_by(*[v.strip() for v in params['orderby'].split(',') if v.strip()])
         # end排序处理
+        if hasattr(model, 'filter_handler'):
+            model_query = model.filter_handler(params, model_query)
         total = model_query.count()
-        fields = model().return_fields
+        fields = model().get_fields(not_add_fields=False)
         fields = fields + ['id', 'created', 'updated', 'date']
         hander = lambda item: object_to_dict(fields, item)
         model_query_instance = model_query[start:end]

@@ -16,7 +16,6 @@ class ArticleClassify(BaseModel):
     name = models.CharField(_('分类名称'), max_length=32)
     parent = models.CharField(_('所属分类'), max_length=32)  # 存储分类上级的GUID
     guid = models.CharField(_('GUID'), max_length=32)
-    # type = models.SmallIntegerField(_('类型'), default=1)
     level = models.SmallIntegerField(_('级别'), default=1)  # 最大到三级（没有做限制）
 
     def __unicode__(self):
@@ -61,10 +60,18 @@ class ArticleClassify(BaseModel):
         return count or 0
 
     @property
+    def isLeaf(self):
+        """
+        判断是否为子节点的（前端使用，根据当前分类有没有子分类来决定）
+        :return:
+        """
+        query = ArticleClassify.objects.filter(parent=self.guid).first()
+        return False if query else True
+
+    @property
     def return_all_children(self):
         """
-        返回所有的子项（利用N叉树遍历方法
-        ）
+        返回所有的子项，包含自身（利用N叉树遍历方法）
         :return:
         """
         root = self
@@ -89,7 +96,7 @@ class ArticleClassify(BaseModel):
         :return:
         """
         parent = ArticleClassify.objects.filter(guid=self.parent).first()
-        loop = 5
+        loop = 5  # 做限制，最多迭代5次
         res = []
         if parent:
             res.append({'name': parent.name})
@@ -117,6 +124,12 @@ class Article(BaseModel):
     def __unicode__(self):
         return u'%s-%s' % (self.title, self.author)
 
+    class Meta:
+        verbose_name = _('文章')
+        verbose_name_plural = _('文章')
+        ordering = ['ordering', 'id']
+        app_label = 'vadmin'
+
     @property
     def return_article_classify_name(self):  # article_classify_name 名字不能用，和框架冲突了
         ac = ArticleClassify.objects.get(guid=self.articleclassify)
@@ -141,8 +154,21 @@ class Article(BaseModel):
     # 由通用方法处理的模型，通过定义add_fields实现字段扩展
     add_fields = ['return_article_classify_name', 'return_classify_parents']
 
-    class Meta:
-        verbose_name = _('文章')
-        verbose_name_plural = _('文章')
-        ordering = ['ordering', 'id']
-        app_label = 'vadmin'
+    # 通用方法获取数据列表，由该方法来做过滤处理，方法名称必须为filter_handler
+    @staticmethod
+    def filter_handler(params, query):
+        """
+        数据筛选处理方法，返回筛选后的结果
+        :return:
+        """
+        classify_guid = params.get('classify_guid')
+        if classify_guid:
+            article_classify = ArticleClassify.objects.filter(guid=classify_guid).first()
+            if not article_classify:
+                return query
+            classify_list = article_classify.return_all_children
+            id_list = [item.guid for item in classify_list if item and item.guid or None]
+            query = query.filter(articleclassify__in=id_list)
+            return query
+        else:
+            return query

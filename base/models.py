@@ -26,14 +26,14 @@ class BaseModel(models.Model):
         """
         return [item.attname for item in BaseModel()._meta.concrete_fields]
 
-    @cached_property
-    def return_fields(self):
+    def get_fields(self, not_add_fields=True):
         """
         返回模型字典名称的list（不会返回id和基本字段，需要则手动添加）
+        :param not_add_fields: 决定是否添加模型的add_fields属性里面的字段
         :return:
         """
         fields = [item.attname for item in self._meta.concrete_fields if item.attname not in self.base_fields]
-        if getattr(self, 'add_fields', None):
+        if getattr(self, 'add_fields', None) and not not_add_fields:
             add_fields = self.add_fields
             fields += add_fields
         return fields
@@ -45,7 +45,7 @@ class BaseModel(models.Model):
         :return:
         """
         _dict = {}
-        _field = self.return_fields
+        _field = self.get_fields()
         for item in _field:
             _dict[item] = getattr(self, item, '')
         return _dict

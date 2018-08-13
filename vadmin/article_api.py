@@ -46,7 +46,7 @@ class ArticleView(ApiHandleView):
         """
         data = request_body_to_dict(request)
         name = data.get('name', '')
-        fields = ArticleClassify().return_fields
+        fields = ArticleClassify().get_fields()
         hander = lambda item: object_to_dict(fields, item)
         query = ArticleClassify.objects.filter(name__contains=name)
         res = [hander(item) for item in query]
@@ -61,7 +61,7 @@ class ArticleView(ApiHandleView):
         :return:
         """
         query = ArticleClassify.objects.filter(level=1)
-        fields = ['name', 'guid', 'return_all_children_count']
+        fields = ['name', 'guid', 'return_all_children_count', 'isLeaf']
         hander = lambda item: object_to_dict(fields, item)
         res = [hander(item) for item in query]
         data = {'items': res}
@@ -77,7 +77,7 @@ class ArticleView(ApiHandleView):
         params = request_body_to_dict(request)
         parent = params.get('parent')
         query = ArticleClassify.objects.filter(parent=parent)
-        fields = ['name', 'guid', 'return_parents', 'return_all_children_count']
+        fields = ['name', 'guid', 'return_parents', 'return_all_children_count', 'isLeaf']
         hander = lambda item: object_to_dict(fields, item)
         res = [hander(item) for item in query]
         data = {'items': res}
