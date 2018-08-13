@@ -56,7 +56,7 @@ class ArticleClassify(BaseModel):
         :return:
         """
         query_list = self.return_all_children
-        id_list = [item.id for item in query_list if item and item.id or None]
+        id_list = [item.guid for item in query_list if item and item.guid or None]
         count = Article.objects.filter(articleclassify__in=id_list).count()
         return count or 0
 
@@ -112,15 +112,23 @@ class Article(BaseModel):
     content = models.TextField(_('内容'))
     times = models.SmallIntegerField(_('浏览次数'))
     guid = models.CharField(_('GUID'), max_length=32)
-    articleclassify = models.CharField(_('所属分类 的GUID'), max_length=32)
+    articleclassify = models.CharField(_('所属分类的GUID'), max_length=32)
 
     def __unicode__(self):
         return u'%s-%s' % (self.title, self.author)
 
     @property
-    def article_classify_name(self):
+    def return_article_classify_name(self):  # article_classify_name 名字不能用，和框架冲突了
         ac = ArticleClassify.objects.get(guid=self.articleclassify)
         return ac and ac.name or ''
+
+    @property
+    def article_to_article_classify(self):
+        return ArticleClassify.objects.filter(guid=self.articleclassify).first()
+
+    @property
+    def return_classify_parents(self):
+        return self.article_to_article_classify.return_parents
 
     def update_times(self):
         """
@@ -131,7 +139,7 @@ class Article(BaseModel):
         self.save()
 
     # 由通用方法处理的模型，通过定义add_fields实现字段扩展
-    add_fields = ['article_classify_name']
+    add_fields = ['return_article_classify_name', 'return_classify_parents']
 
     class Meta:
         verbose_name = _('文章')

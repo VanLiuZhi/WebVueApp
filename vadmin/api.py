@@ -46,19 +46,19 @@ class ApiHandleView(BaseView):
         return self.post(request, api_name)
 
     def post(self, request, api_name):
-        try:
-            print(api_name)
-            r = re.compile('[a-z]+')
-            re_match = r.match(api_name)
-            action = re_match and re_match[0] or None
-            models_name = api_name[len(action):]
-            api_object = self.get_api_method(api_name, action)
-            if not api_object:
-                return self.xml_response_for_json(self.error_response(msg='Method Not Found'))
-            res = api_object(request, models_name)
-            return res
-        except BaseException as e:
-            print(e)
+        # try:
+        print(api_name)
+        r = re.compile('[a-z]+')
+        re_match = r.match(api_name)
+        action = re_match and re_match[0] or None
+        models_name = api_name[len(action):]
+        api_object = self.get_api_method(api_name, action)
+        if not api_object:
+            return self.xml_response_for_json(self.error_response(msg='Method Not Found'))
+        res = api_object(request, models_name)
+        return res
+        # except BaseException as e:
+        #     print(e)
 
     def get_api_method(self, api_name, action):
         if action and action in self.base_method_str:

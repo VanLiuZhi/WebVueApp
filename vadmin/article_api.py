@@ -31,7 +31,7 @@ class ArticleView(ApiHandleView):
         article = Article.objects.get(guid=guid)
         article.update_times()  # 更新浏览次数
         data = article.return_dict
-        data['article_menu_label'] = article.article_classify_name
+        data['article_menu_label'] = article.return_article_classify_name
         if not params.get('from_to_admin'):
             content_handler = ContentHandler(data['content'])
             data['menu'], data['content'] = content_handler.generate_menu_str()
@@ -61,7 +61,7 @@ class ArticleView(ApiHandleView):
         :return:
         """
         query = ArticleClassify.objects.filter(level=1)
-        fields = ['name', 'guid']
+        fields = ['name', 'guid', 'return_all_children_count']
         hander = lambda item: object_to_dict(fields, item)
         res = [hander(item) for item in query]
         data = {'items': res}
@@ -77,7 +77,7 @@ class ArticleView(ApiHandleView):
         params = request_body_to_dict(request)
         parent = params.get('parent')
         query = ArticleClassify.objects.filter(parent=parent)
-        fields = ['name', 'guid', 'return_parents']
+        fields = ['name', 'guid', 'return_parents', 'return_all_children_count']
         hander = lambda item: object_to_dict(fields, item)
         res = [hander(item) for item in query]
         data = {'items': res}
