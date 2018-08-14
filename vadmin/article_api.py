@@ -83,6 +83,19 @@ class ArticleView(ApiHandleView):
         data = {'items': res}
         return self.xml_response_for_json(self.success_response(data=data, msg='获取成功'))
 
+    def getCommonClassifyTag(self, *args):
+        """
+        获取常用标签（随机返回10个）
+        :return:
+        """
+        # ArticleClassify.Meta.ordering = ['?']
+        query = ArticleClassify.objects.filter()[:10]
+        fields = ['name', 'guid']
+        hander = lambda item: object_to_dict(fields, item)
+        res = [hander(item) for item in query]
+        data = {'items': res}
+        return self.xml_response_for_json(self.success_response(data=data, msg='获取成功'))
+
 
 urlpatterns = [
     path('<api_name>', csrf_exempt(ArticleView.as_view())),

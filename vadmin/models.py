@@ -27,7 +27,8 @@ class ArticleClassify(BaseModel):
     class Meta:
         verbose_name = _('文章分类')
         verbose_name_plural = _('文章分类')
-        ordering = ['ordering', 'id']
+        # ordering = ['ordering', 'id']
+        ordering = ['?']
         app_label = 'vadmin'
 
     @property
