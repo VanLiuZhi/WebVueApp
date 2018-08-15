@@ -34,18 +34,17 @@ class BaseModel(models.Model):
         """
         fields = [item.attname for item in self._meta.concrete_fields if item.attname not in self.base_fields]
         if getattr(self, 'add_fields', None) and not not_add_fields:
-            add_fields = self.add_fields
+            add_fields = getattr(self, 'add_fields', [])
             fields += add_fields
         return fields
 
-    @property
-    def return_dict(self):
+    def get_dict(self, not_add_fields=True):
         """
         返回模型实例的字典
         :return:
         """
         _dict = {}
-        _field = self.get_fields()
+        _field = self.get_fields(not_add_fields)
         for item in _field:
             _dict[item] = getattr(self, item, '')
         return _dict

@@ -27,8 +27,8 @@ class ArticleClassify(BaseModel):
     class Meta:
         verbose_name = _('文章分类')
         verbose_name_plural = _('文章分类')
-        # ordering = ['ordering', 'id']
-        ordering = ['?']
+        ordering = ['ordering', 'id']
+        # ordering = ['?']
         app_label = 'vadmin'
 
     @property
@@ -142,6 +142,10 @@ class Article(BaseModel):
 
     @property
     def return_classify_parents(self):
+        """
+        返回文章所属分类的层级信息
+        :return:
+        """
         return self.article_to_article_classify.return_parents
 
     def update_times(self):
