@@ -19,7 +19,7 @@ class IndexView(BaseView):
 
     def get(self, request):
         print(request)
-        return self.render("index2.html")
+        return self.render("index3.html")
         # return self.render("123")
         # return HttpResponse(json.dumps({'a': 123}))
 
