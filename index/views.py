@@ -26,7 +26,7 @@ class VadminView(BaseView):
 
     def get(self, request):
         print(request)
-        return self.render("index3.html")
+        return self.render("vadmin_index.html")
 
 
 urlpatterns = [
