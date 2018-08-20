@@ -12,8 +12,6 @@ from django.views.decorators.csrf import csrf_exempt
 class IndexView(BaseView):
     # @csrf_exempt
     def post(self, request):
-        print(request)
-        print(self.request.POST.get('a'))
         return HttpResponse(json.dumps({'a': 123}))
 
     def get(self, request):
@@ -24,16 +22,11 @@ class IndexView(BaseView):
 class VadminView(BaseView):
     # @csrf_exempt
     def post(self, request):
-        # return self.render("index.html")
-        print(request, 123)
-        print(self.request.POST.get('a'))
         return HttpResponse(json.dumps({'a': 123}))
 
     def get(self, request):
         print(request)
         return self.render("index3.html")
-        # return self.render("123")
-        # return HttpResponse(json.dumps({'a': 123}))
 
 
 urlpatterns = [
