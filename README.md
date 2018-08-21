@@ -1,6 +1,8 @@
 # WebVue-Django
 # VanLiuZhi
 # 2018 05 15
+标签测试
+
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
 [![Test coverage][coveralls-image]][coveralls-url]
@@ -25,4 +27,5 @@
   - models
     - ArticleMenu 文章菜单
     - Article 文章
+ 
                 
