@@ -12,18 +12,24 @@ from django.views.decorators.csrf import csrf_exempt
 class IndexView(BaseView):
     # @csrf_exempt
     def post(self, request):
-        # return self.render("index.html")
-        print(request)
-        print(self.request.POST.get('a'))
         return HttpResponse(json.dumps({'a': 123}))
 
     def get(self, request):
         print(request)
-        return self.render("index2.html")
-        # return self.render("123")
-        # return HttpResponse(json.dumps({'a': 123}))
+        return self.render("index.html")
+
+
+class VadminView(BaseView):
+    # @csrf_exempt
+    def post(self, request):
+        return HttpResponse(json.dumps({'a': 123}))
+
+    def get(self, request):
+        print(request)
+        return self.render("vadmin_index.html")
 
 
 urlpatterns = [
-    path('', csrf_exempt(IndexView.as_view()))
+    path('vadmin', csrf_exempt(VadminView.as_view())),
+    path('index', csrf_exempt(IndexView.as_view())),
 ]
