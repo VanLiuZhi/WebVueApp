@@ -18,7 +18,7 @@ def get_uuid():
 
 def request_body_to_dict(request):
     """
-    转换XMLHttpRequest请求的数据
+    转换XMLHttpRequest请求的数据(前端请求使用axios默认配置)
     :param request:
     :return:
     """
@@ -85,5 +85,4 @@ def json_filed_default(obj):
     if hasattr(obj, 'to_json'):
         to_json = obj.to_json
         return to_json() if callable(to_json) else to_json
-
     raise TypeError(type(obj))

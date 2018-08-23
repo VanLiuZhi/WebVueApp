@@ -5,6 +5,7 @@
 # @File    : rich_text_utils.py
 
 # 处理富文本的原始数据，安照定义的规则来生成目录，并对原数据添加抛锚id
+# 改进版通过scrollIntoView定位，不再使用抛锚
 
 from jinja2 import Template
 import re
@@ -38,7 +39,9 @@ class ContentHandler:
     """
     文章内容处理类
     """
-    Chinese_re = "[\u4E00-\u9FA5]+"
+    # Chinese_re = "[\u4E00-\u9FA5]+"
+    # Chinese_re = "[a-zA-Z\u4E00-\u9FA5 ]+"
+    Chinese_re = '<h\d>(.+)</h\d>'  # 匹配标签中的text内容
     h2 = '<h2.+</h2>'
     h3 = '<h2.+</h2>|<h3.+</h3>'
     pre_class = '<pre class=".+">'
@@ -46,7 +49,7 @@ class ContentHandler:
 
     def __init__(self, html_str):
         self.html_str = html_str
-        self.raw_html_str = html_str
+        self.raw_html_str = html_str  # 存储原字符串
 
     def get_chinese(self, _str):
         res = re.findall(self.Chinese_re, _str)[0]
@@ -86,7 +89,7 @@ class ContentHandler:
 
     def generate_menu_str(self):
         """
-        生成模板，并且生成修改后的富文本
+        生成模板，并且生成修改后的富文本(目录计算，只允许设置h2，h3, 并且没有h2的时候，目录将不会被生成，暂时不做兼容性的处理)
         :return:
         """
         self.compile_re()
@@ -146,9 +149,10 @@ if __name__ == '__main__':
             <p style="text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>"""
 
     _re_str = '<pre class=".+">'
-
-    # res = re.findall(_re_str, _str)
-    # print(res)
-
-    c = ContentHandler(html_str=_str)
-    print(c.generate_menu_str())
+    # 匹配标题标签的text内容
+    # _re_str = '<h\d>(.+)</h\d>'
+    Chinese_re = "[a-zA-Z\u4E00-\u9FA5 ]+"
+    res = re.findall(Chinese_re, 'alAsk啊 啊')
+    print(res)
+    # c = ContentHandler(html_str=_str)
+    # print(c.generate_menu_str())

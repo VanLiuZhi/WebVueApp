@@ -14,13 +14,40 @@ from django.shortcuts import render, HttpResponse
 from base.util import json_filed_default
 
 
+class SessionMinx:
+    """
+    session处理类
+    """
+    def get_session(self):
+        return self.request.session
+
+    def session_get(self, k):
+        return self.get_session()[k] if k in self.get_session() else None
+
+    def session_del(self, k):
+        if k in self.get_session(): del self.get_session()[k]
+
+    def session_set(self, k, v):
+        self.get_session()[k] = v
+
+    def session_get_once(self, k):
+        """
+        该方法获取一次数据就从session中删除
+        :param k:
+        :return:
+        """
+        v = self.session_get(k)
+        self.session_del(k)
+        return v
+
+
 class ResponseMinx:
     """
     响应处理类 #TODO 验证每次连接是不是都会创建新的对象，让响应方法得到新的参数（或者考虑单实例）
     """
     code = '0'
     data = ''
-    msg = ''
+    msg = '请求成功'
     SUCCESS_CODE = '0'
     ERROR_CODE = '-1'
 

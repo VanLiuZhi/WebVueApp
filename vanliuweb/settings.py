@@ -25,7 +25,7 @@ SECRET_KEY = '*n+=53cg=tlr-(s6f4x5%)m4=psyr7=0znxknf45e7*a!=2xb='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', '123.207.254.202']
 
 
 # Application definition
@@ -41,16 +41,35 @@ INSTALLED_APPS = [
     'index.apps.IndexConfig',
     'stats.apps.StatsConfig',
     'vadmin.apps.VadminConfig',
+    'user.apps.UserConfig'
 ]
 
+# 中间件配置
 MIDDLEWARE = [
+    'base.extend_session.ExtendSessionMiddleware',  # 扩展Session中间件
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+# 密码加密使用的算法
+# 列表的第一个元素 (即settings.PASSWORD_HASHERS[0]) 会用于储存密码，
+# 所有其它元素都是用于验证的哈希值，它们可以用于检查现有的密码。
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+    'django.contrib.auth.hashers.SHA1PasswordHasher',
+    'django.contrib.auth.hashers.MD5PasswordHasher',
+    'django.contrib.auth.hashers.UnsaltedSHA1PasswordHasher',
+    'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
+    'django.contrib.auth.hashers.CryptPasswordHasher',
 ]
 
 ROOT_URLCONF = 'vanliuweb.urls'
@@ -89,6 +108,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
+# 该设置是对密码做验证，比如这里对name做了验证，验证了name有类似的，最小长度等
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -128,3 +148,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
     # '/var/www/static/',
 ]
+
+# 设置了session name 的值，该值最好在同一套框架中不要重复，这让浏览器无法区分，导致A项目和B项目互通
+SESSION_COOKIE_NAME = 'vanliuzhi_id'
