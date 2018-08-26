@@ -92,10 +92,18 @@ class ArticleView(ApiHandleView):
         :return:
         """
         # ArticleClassify.Meta.ordering = ['?']
+        import random
+        color_list = ['#FF895D', '#31bfb9', '#FF2E63', '#00BBF0', '#AC005D', '#0D7377', '#67c23a', '#e6a23c', '#404802',
+                      '#009a61']
+        random.shuffle(color_list)
         query = ArticleClassify.objects.filter()[:10]
         fields = ['name', 'guid']
         hander = lambda item: object_to_dict(fields, item)
         res = [hander(item) for item in query]
+        for index, item in enumerate(res):
+            item.update({'color': color_list[index]})
+        # res = [item.update({'color': color_list[index]}) for index, item in enumerate(res)]
+        random.shuffle(res)
         data = {'items': res}
         return self.xml_response_for_json(self.success_response(data=data, msg='获取成功'))
 
