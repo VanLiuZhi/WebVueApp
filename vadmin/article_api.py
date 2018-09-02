@@ -31,10 +31,12 @@ class ArticleView(ApiHandleView):
         article = Article.objects.get(guid=guid)
         article.update_times()  # 更新浏览次数
         data = {}
+        # 处理后台请求
         if params.get('from_to_admin'):
             data = article.get_dict()
+        # 处理前台请求
         if not params.get('from_to_admin'):
-            data = article.get_dict(not_add_fields=False)
+            data = article.get_dict(not_add_fields=False, other_fields=['created', 'updated'])
             content_handler = ContentHandler(data['content'])
             data['menu'], data['content'] = content_handler.generate_menu_str()
         data['article_menu_label'] = article.return_article_classify_name

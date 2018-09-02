@@ -187,6 +187,36 @@ class Article(BaseModel):
         ordering = ['ordering', 'id']
         app_label = 'vadmin'
 
+    @staticmethod
+    def refresh_ordering():
+        """
+        刷新排序
+        :return:
+        """
+        query = Article.objects.all()
+        for key, item in enumerate(query):
+            item.ordering = key
+            item.save()
+        return query.count()
+
+    @property
+    def lastArticle(self):
+        """
+        上一篇文章
+        :return:
+        """
+        a = Article.objects.filter(ordering=(self.ordering - 1)).first()
+        return a and {'guid': a.guid, 'title': a.title} or {'guid': self.guid, 'title': '没有更多'}
+
+    @property
+    def nextArticle(self):
+        """
+        下一篇文章
+        :return:
+        """
+        a = Article.objects.filter(ordering=(self.ordering + 1)).first()
+        return a and {'guid': a.guid, 'title': a.title} or {'guid': self.guid, 'title': '没有更多'}
+
     @property
     def return_article_classify_name(self):  # article_classify_name 名字不能用，和框架冲突了
         ac = ArticleClassify.objects.get(guid=self.articleclassify)
@@ -213,7 +243,7 @@ class Article(BaseModel):
         self.save()
 
     # 由通用方法处理的模型，通过定义add_fields实现字段扩展
-    add_fields = ['return_article_classify_name', 'return_classify_parents']
+    add_fields = ['return_article_classify_name', 'return_classify_parents', 'lastArticle', 'nextArticle']
 
     # 通用方法获取数据列表，由该方法来做过滤处理，方法名称必须为filter_handler
     @staticmethod

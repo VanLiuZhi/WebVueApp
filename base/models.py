@@ -38,13 +38,14 @@ class BaseModel(models.Model):
             fields += add_fields
         return fields
 
-    def get_dict(self, not_add_fields=True):
+    def get_dict(self, not_add_fields=True, other_fields=[]):
         """
         返回模型实例的字典
         :return:
         """
         _dict = {}
         _field = self.get_fields(not_add_fields)
+        _field += other_fields
         for item in _field:
             _dict[item] = getattr(self, item, '')
         return _dict
