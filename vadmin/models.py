@@ -5,6 +5,7 @@ from django.db import models
 from base.models import BaseModel
 from base.fields import verbose_name as _
 from django.utils.functional import cached_property
+from base.util import object_to_dict
 
 MENU_TYPE = []
 
@@ -28,7 +29,7 @@ class ArticleClassify(BaseModel):
         verbose_name = _('文章分类')
         verbose_name_plural = _('文章分类')
         ordering = ['ordering', 'id']
-        # ordering = ['?']
+        # ordering = ['?'] 随机排序
         app_label = 'vadmin'
 
     @property
@@ -55,7 +56,7 @@ class ArticleClassify(BaseModel):
         返回该分类下有多少文章
         :return:
         """
-        query_list = self.return_all_children
+        query_list = self.return_all_children_to_list
         id_list = [item.guid for item in query_list if item and item.guid or None]
         count = Article.objects.filter(articleclassify__in=id_list).count()
         return count or 0
@@ -69,10 +70,42 @@ class ArticleClassify(BaseModel):
         query = ArticleClassify.objects.filter(parent=self.guid).first()
         return False if query else True
 
-    @property
-    def return_all_children(self):
+    @staticmethod
+    def return_tree_data():
         """
-        返回所有的子项，包含自身（利用N叉树遍历方法）
+        返回树形结构数据
+        :return:
+        """
+        # 查出顶级对象
+        top_data = ArticleClassify.objects.filter(level=1)
+        data = []
+        for item in top_data:
+            hander = lambda x: object_to_dict(['name', 'guid', 'isLeaf', 'return_all_children_count'], x)
+            res = hander(item)
+            res['children_list'] = item.get_true_children(item.guid, hander)
+            data.append(res)
+        return data
+
+    def get_true_children(self, guid, hander):
+        """
+        树形数据中计算子项
+        :param guid:
+        :param hander:
+        :return:
+        """
+        hander = hander
+        query = ArticleClassify.objects.filter(parent=guid)
+        children_list = [hander(i) for i in query]
+        for i in children_list:
+            if not i['isLeaf']:
+                self_query = ArticleClassify.objects.filter(guid=i.get('guid')).first()
+                i['children_list'] = self_query.get_true_children(i.get('guid'), hander)
+        return children_list
+
+    @property
+    def return_all_children_to_list(self):
+        """
+        返回所有的子项，包含自身（利用N叉树遍历方法, 结果包含在一个列表中）
         :return:
         """
         root = self
@@ -88,6 +121,29 @@ class ArticleClassify(BaseModel):
                 res.append(current)  # 直接把节点加到结果里面
                 for child in current.return_children:  # 所有子结点入队列
                     que.append(child)
+        return res
+
+    def return_all_children_to_layer(self):
+        """
+        返回所有的子项(N叉树层序遍历)
+        :return:
+        """
+        root = self
+        if not root:
+            return []
+        que = []  # 保存节点的队列
+        res = []  # 保存结果的列表
+        que.append(root)  #
+        while len(que):  # 判断队列不为空
+            length = len(que)
+            sub = []  # 保存每层的节点的值
+            for i in range(length):
+                current = que.pop(0)  # 出队列的当前节点
+                print(current)
+                sub.append(current)
+                for child in current.return_children:  # 所有子结点入队列
+                    que.append(child)
+            res.append(sub)  # 把每层的节点的值加入结果列表
         return res
 
     @property
@@ -171,7 +227,7 @@ class Article(BaseModel):
             article_classify = ArticleClassify.objects.filter(guid=classify_guid).first()
             if not article_classify:
                 return query
-            classify_list = article_classify.return_all_children
+            classify_list = article_classify.return_all_children_to_list
             id_list = [item.guid for item in classify_list if item and item.guid or None]
             query = query.filter(articleclassify__in=id_list)
             return query

@@ -56,6 +56,17 @@ class ArticleView(ApiHandleView):
         data = {'items': res, 'count': query.count()}
         return self.xml_response_for_json(self.success_response(data=data, msg='获取成功'))
 
+    def getTreeArticleClassify(self, request, *args):
+        """
+        获取文章分类的树形数据
+        :param request:
+        :param args:
+        :return:
+        """
+        res = ArticleClassify.return_tree_data()
+        data = {'items': res}
+        return self.xml_response_for_json(self.success_response(data=data, msg='获取成功'))
+
     def getTopLevelArticleClassify(self, request, *args):
         """
         获取文章分类的顶级分类（level为1的）
