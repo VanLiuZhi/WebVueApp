@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # user:vanliu  password:destinymy3
@@ -25,3 +26,5 @@ urlpatterns = [
     path('vadmin/', (include('vadmin.views'))),
     path('user/', include('user.views'))
 ]
+
+urlpatterns += staticfiles_urlpatterns()
