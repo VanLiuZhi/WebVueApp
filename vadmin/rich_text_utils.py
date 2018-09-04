@@ -4,7 +4,7 @@
 # @Author  : liuzhi
 # @File    : rich_text_utils.py
 
-# 处理富文本的原始数据，安照定义的规则来生成目录，并对原数据添加抛锚id
+# 处理富文本的原始数据，按照定义的规则来生成目录，并对原数据添加抛锚id
 # 改进版通过scrollIntoView定位，不再使用抛锚
 
 from jinja2 import Template
