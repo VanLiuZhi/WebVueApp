@@ -2,6 +2,7 @@
 # VanLiuZhi
 # 2018 05 15
 标签测试
+time
 
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
